@@ -6,7 +6,7 @@
   "homepage": "http://www.40digits.com",
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/40digits/wp-boilerplate-v3"
+    "url": "https://github.com/40Digits/wordpress-local-build-script"
   },
   "dependencies": {
     "ejs": "^2.3.1"
