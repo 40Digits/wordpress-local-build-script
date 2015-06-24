@@ -3,7 +3,7 @@
   "title": "40D Local Wordpress Setup",
   "description": "Gulp build script used for local Wordpress environment setup.",
   "main": "index.js",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "homepage": "http://www.40digits.com",
   "repository": {
     "type": "git",

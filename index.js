@@ -61,15 +61,6 @@ module.exports = function () {
 		log('Hosts file already up-to-date')
 	}
 
-
-	// Write hosts
-	if (currentHostFile.toString().indexOf(config.localUrl) === -1) {
-		fs.writeFileSync(hostsFile, newHostsFile);
-		log('Hosts file updated');
-	} else {
-		log('Hosts file already up-to-date')
-	}
-
 	// Create mysql database
 	exec(mysql, function (error, stdout, stderr) {
 		log('MySQL database "' + database + '" has been created');
