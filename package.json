@@ -1,0 +1,17 @@
+{
+  "name": "wp-local-build-script",
+  "title": "40D Local Wordpress Setup",
+  "description": "Gulp build script used for local Wordpress environment setup.",
+  "version": "1.0.0",
+  "homepage": "http://www.40digits.com",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/40digits/wp-boilerplate-v3"
+  },
+  "dependencies": {
+    "ejs": "^2.3.1"
+  },
+  "devDependencies": {
+    "whoof": "^1.0.0"
+  }
+}
