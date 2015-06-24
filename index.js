@@ -54,11 +54,13 @@ module.exports = function () {
 	}
 
 	// Write vhosts
-	fs.writeFileSync(vhostFile, ejs.render(vhostTemplate, {
-		siteName: config.siteName,
-		directory: __dirname.toString()
-	}));
-	log('Vhost created');
+	if (currentHostFile.toString().indexOf(config.localUrl) === -1) {
+		fs.writeFileSync(hostsFile, newHostsFile);
+		log('Hosts file updated');
+	} else {
+		log('Hosts file already up-to-date')
+	}
+
 
 	// Write hosts
 	if (currentHostFile.toString().indexOf(config.localUrl) === -1) {

@@ -21,8 +21,17 @@ Inside `build-config.js` you will find a few configuration options to help tailo
 
 This assumes you have node installed. If you're reading this you probably already do, but I thought I'd mention it.
 
-1. Modify `build-config.js` if you so desire
-2. `$ npm install`
-3. `$ sudo node build`
-4. `$ say -v "Pipe Organ" "CAN YOU DIG IT?"`
-5. :feelsgood:
+1. `$ npm i`
+2. Create `gulpfile.js` in the project root
+
+```
+var gulp = require('gulp'),
+    build = require('wp-local-build-script');
+
+gulp.task('build', build);
+```
+
+3. Modify `build-config.js` if you so desire
+4. `$ sudo gulp build`
+5. `$ say -v "Pipe Organ" "CAN YOU DIG IT?"`
+6. :feelsgood:
