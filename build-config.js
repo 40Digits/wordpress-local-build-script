@@ -6,7 +6,9 @@ module.exports = {
   localUrl: 'l.<%= siteName %>',
 
   // Create the site name based on the repo directory name/repo slug
-  siteName: path.basename(__dirname.toString()),
+  // It's normalized based on being at: repo-name/node_modules/wp-local-build-script/
+  // Adjust the ../.. accordingly
+  siteName: path.basename(path.join(__dirname.toString(), '..', '..')),
 
   // File paths
   vhostsDir: '/etc/apache2/extra/vhosts/',
