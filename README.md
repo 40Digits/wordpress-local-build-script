@@ -35,25 +35,25 @@ Since everyone is a snowflake, here are available options for configuration and 
 
 1. Create `gulpfile.js` in the project root
 
-```
-var gulp = require('gulp'),
-    build = require('wp-local-build-script');
+  ```
+  var gulp = require('gulp'),
+      build = require('wp-local-build-script');
 
-gulp.task('build', build);
-```
+  gulp.task('build', build);
+  ```
 
-Or using custom configuration. See above for a complete list of available options.
+  Or using custom configuration. See above for a complete list of available options.
 
-```
-var gulp = require('gulp'),
-    build = require('wp-local-build-script');
+  ```
+  var gulp = require('gulp'),
+      build = require('wp-local-build-script');
 
-gulp.task('build', build({
-  localUrl: '<%= siteName %>.dev',
-  mysqlUser: 'admin',
-  mysqlPw: '1234'
-}));
-```
+  gulp.task('build', build({
+    localUrl: '<%= siteName %>.dev',
+    mysqlUser: 'admin',
+    mysqlPw: '1234'
+  }));
+  ```
 
 2. `$ sudo gulp build`
 3. `$ say -v "Pipe Organ" "CAN YOU DIG IT?"`
