@@ -1,28 +1,39 @@
 # 40digits Local Wordpress Setup
 
-## Setup/Installation
-
-Included is a build script that sets up your local dev environment faster than you can `$ say -v g "Restart apache"`.
+> A build script that sets up your local dev environment faster than you can `$ say -v g "Restart apache"`.
 
 Things it does:
 
-1. Renames the theme folder to whatever the site directory name is, which is typically the repo slug
+1. Renames the theme folder to whatever the site name is, which is typically the repo slug and/or base directory name
 2. Creates a vhost file
 3. Writes an entry in your hosts file
 4. Creates a database
 5. Creates `wp-config.php`
 6. Restarts apache
 
-Again, the site name defaults to the site's root directory, which is typically the repo slug. This site name is used for the theme folder name, url, and database. So just about everything. If you don't like that default, too bad! JK just change it in `build-config.js`.
+## Options
 
-Inside `build-config.js` you will find a few configuration options to help tailor to your specific dev preferences, because everyone is a snowflake. However, it can build your environment without any messing about, so long as your MySQL user is `root` and your password is empty.
+Since everyone is a snowflake, here are available options for configuration and their defaults.
 
-### TL;DR :rooster::dash:
+- `siteName: path.basename(path.join(__dirname.toString(), '..', '..'))`: The name of the site/repo. Defaults to the project directory name, which is normalized based on being at `repo-name/node_modules/wp-local-build-script/`. Adjust as needed. No spaces, please.
 
-This assumes you have node installed. If you're reading this you probably already do, but I thought I'd mention it.
+- `localUrl: 'l.<%= siteName %>'`: The url you want. This is rendered with ejs based on `siteName`.
 
-1. `$ npm i`
-2. Create `gulpfile.js` in the project root
+- `vhostsDir: '/etc/apache2/extra/vhosts/'`: The directory in which to keep your vhost `.conf` files.
+
+- `hostsFile: '/etc/hosts'`: The location of your hosts file.
+
+- `customLog: '/http-logs/<%= siteName %>.log'`: Log path. This is for the vhost configuration. Rendered with ejs using `siteName`.
+
+- `errorLog: '/http-logs/<%= siteName %>.error.log'`: The path for the apache error logs. Also rendered with ejs using the `siteName`.
+
+- `mysqlUser: 'root'`: Your MySQL username.
+
+- `mysqlPw: ''`: Your MySQL password.
+
+## Instructions :rooster::dash:
+
+1. Create `gulpfile.js` in the project root
 
 ```
 var gulp = require('gulp'),
@@ -31,7 +42,23 @@ var gulp = require('gulp'),
 gulp.task('build', build);
 ```
 
-3. Modify `build-config.js` if you so desire
-4. `$ sudo gulp build`
-5. `$ say -v "Pipe Organ" "CAN YOU DIG IT?"`
-6. :feelsgood:
+Or using custom configuration. See above for a complete list of available options.
+
+```
+var gulp = require('gulp'),
+    build = require('wp-local-build-script');
+
+gulp.task('build', build({
+  localUrl: '<%= siteName %>.dev',
+  mysqlUser: 'admin',
+  mysqlPw: '1234'
+}));
+```
+
+2. `$ sudo gulp build`
+3. `$ say -v "Pipe Organ" "CAN YOU DIG IT?"`
+4. :feelsgood:
+
+## Considerations
+
+I've noticed that if the apache log paths don't exist, you'll get weird behavior. So make sure those are valid paths.
