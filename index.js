@@ -20,7 +20,7 @@ module.exports = function (options) {
 		].join('\n'),
 
 		vhostTemplate = [
-			'<VirtualHost *:<?= port ?>>',
+			'<VirtualHost *:<%= port %>>',
 				'\tServerAlias ' + config.localUrl,
 				'\tDocumentRoot <%= directory %>',
 				'\tCustomLog ' + config.customLog + ' combined',
