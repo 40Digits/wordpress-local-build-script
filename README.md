@@ -24,6 +24,8 @@ Since everyone is a snowflake, here are available options for configuration and 
 
 - `hostsFile: '/etc/hosts'`: The location of your hosts file.
 
+- `httpPort: '80'`: The port number you use in your vhosts.
+
 - `customLog: '/http-logs/<%= siteName %>.log'`: Log path. This is for the vhost configuration. Rendered with ejs using `siteName`.
 
 - `errorLog: '/http-logs/<%= siteName %>.error.log'`: The path for the apache error logs. Also rendered with ejs using the `siteName`.

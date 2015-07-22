@@ -8,7 +8,7 @@ module.exports = function (options) {
 		colors = require('colors'),
 		path = require('path'),
 		open = require('open'),
-		siteName = config.siteName.replace(' ', '-'),
+		siteName = config.siteName.replace(' ', '-').toLowerCase(),
 
 		// Vhost vars
 		apacheDirective = [
@@ -20,7 +20,7 @@ module.exports = function (options) {
 		].join('\n'),
 
 		vhostTemplate = [
-			'<VirtualHost *:80>',
+			'<VirtualHost *:<?= port ?>>',
 				'\tServerAlias ' + config.localUrl,
 				'\tDocumentRoot <%= directory %>',
 				'\tCustomLog ' + config.customLog + ' combined',
@@ -28,14 +28,14 @@ module.exports = function (options) {
 			'</VirtualHost>'
 		].join('\n'),
 
-		vhostFile = path.join(config.vhostsDir, siteName.toLowerCase() + '.conf'),
+		vhostFile = path.join(config.vhostsDir, siteName + '.conf'),
 
 		// Hosts vars
 		currentHostFile = fs.readFileSync(config.hostsFile),
-		renderedLocalUrl = ejs.render(config.localUrl, { siteName: siteName }).toLowerCase(),
+		renderedLocalUrl = ejs.render(config.localUrl, { siteName: siteName }),
 
 		// db vars
-		database = siteName.replace(/-/g, '_').toLowerCase(),
+		database = siteName.replace(/-/g, '_'),
 		mysql = ejs.render('mysql --user="<%= user %>" --password="<%= pw %>" -e "CREATE DATABASE IF NOT EXISTS <%= database %>"', {
 			user: config.mysqlUser,
 			pw: config.mysqlPw,
@@ -72,7 +72,8 @@ module.exports = function (options) {
 
 		fs.writeFileSync(vhostFile, ejs.render(vhostContents, {
 			siteName: siteName,
-			directory: path.join(__dirname.toString(), '..', '..')
+			directory: path.join(__dirname.toString(), '..', '..'),
+			port: config.httpPort
 		}));
 		log(siteName + '.conf created');
 	} catch (e) {

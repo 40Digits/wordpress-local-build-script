@@ -10,9 +10,10 @@ module.exports = {
   // Adjust the ../.. accordingly
   siteName: path.basename(path.join(__dirname.toString(), '..', '..')),
 
-  // File paths
+  // File paths n ports
   vhostsDir: '/etc/apache2/extra/vhosts/',
   hostsFile: '/etc/hosts',
+  httpPort: '80',
 
   // Log paths, also built with ejs
   customLog: '/http-logs/<%= siteName %>.log',
