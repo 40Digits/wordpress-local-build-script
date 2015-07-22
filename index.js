@@ -2,13 +2,23 @@ module.exports = function (options) {
 	var fs = require('fs'),
 		ejs = require('ejs'),
 		exec = require('child_process').exec,
+		merge = require('./merge'),
 		config = merge(require('./build-config'), options),
 		bark = require('whoof'),
 		colors = require('colors'),
 		path = require('path'),
+		open = require('open'),
 		siteName = config.siteName.replace(' ', '-'),
 
 		// Vhost vars
+		apacheDirective = [
+			'<Directory "<%= directory %>">',
+				'\tOrder allow,deny',
+				'\tAllow from all',
+				'\tRequire all granted',
+			'</Directory>\n\n',
+		].join('\n'),
+
 		vhostTemplate = [
 			'<VirtualHost *:80>',
 				'\tServerAlias ' + config.localUrl,
@@ -17,16 +27,15 @@ module.exports = function (options) {
 				'\tErrorLog ' + config.errorLog,
 			'</VirtualHost>'
 		].join('\n'),
-		hostTemplate = '127.0.0.1 ' + config.localUrl,
 
-		vhostFile = path.join(config.vhostsDir, siteName + '.conf'),
+		vhostFile = path.join(config.vhostsDir, siteName.toLowerCase() + '.conf'),
 
 		// Hosts vars
 		currentHostFile = fs.readFileSync(config.hostsFile),
-		renderedLocalUrl = ejs.render(hostTemplate, { siteName: siteName }),
+		renderedLocalUrl = ejs.render(config.localUrl, { siteName: siteName }).toLowerCase(),
 
 		// db vars
-		database = siteName.replace(/-/g, '_'),
+		database = siteName.replace(/-/g, '_').toLowerCase(),
 		mysql = ejs.render('mysql --user="<%= user %>" --password="<%= pw %>" -e "CREATE DATABASE IF NOT EXISTS <%= database %>"', {
 			user: config.mysqlUser,
 			pw: config.mysqlPw,
@@ -39,9 +48,13 @@ module.exports = function (options) {
 			.replace('username_here', config.mysqlUser)
 			.replace('password_here', config.mysqlPw),
 
-		// Console logging helper
+		// Console logging helpers
 		log = function (message) {
 			console.log('[' + 'build'.cyan + '] ' + message.yellow);
+		},
+
+		error = function (message) {
+			console.log('[' + 'build'.cyan + '] ' + message.red);
 		};
 
 
@@ -50,29 +63,35 @@ module.exports = function (options) {
 		fs.renameSync('./wp-content/themes/wp-theme', './wp-content/themes/' + siteName);
 		log('Theme folder named to ' + siteName);
 	} catch (e) {
-		log('Theme folder already renamed.');
+		log('Theme folder already renamed as ' + siteName);
 	}
 
-	// // Write vhosts
-	fs.writeFileSync(vhostFile, ejs.render(vhostTemplate, {
-		siteName: siteName,
-		directory: path.join(__dirname.toString(), '..', '..')
-	}));
-	log(siteName + '.conf created');
+	// Write vhosts
+	try {
+		var vhostContents = config.apache24 ? apacheDirective + vhostTemplate : vhostTemplate;
+
+		fs.writeFileSync(vhostFile, ejs.render(vhostContents, {
+			siteName: siteName,
+			directory: path.join(__dirname.toString(), '..', '..')
+		}));
+		log(siteName + '.conf created');
+	} catch (e) {
+		error('ERROR CREATING VHOST: ' + e.message);
+	}
 
 
 	// Write hosts
 	if (currentHostFile.toString().indexOf(renderedLocalUrl) === -1) {
-		fs.writeFileSync(config.hostsFile, currentHostFile + '\n' + renderedLocalUrl);
-		log('Hosts file updated');
+		fs.writeFileSync(config.hostsFile, currentHostFile + '\n' + '127.0.0.1\t' + renderedLocalUrl);
+		log(renderedLocalUrl + ' has been added to your hosts file');
 	} else {
-		log('Hosts file already up-to-date')
+		log(renderedLocalUrl + ' is already in your hosts file')
 	}
 
 	// Create mysql database
 	exec(mysql, function (error, stdout, stderr) {
 		if (error !== null) {
-		  log('MySQL error: ' + error);
+			log('MySQL error: ' + error);
 		} else {
 			log('MySQL database "' + database + '" has been created');
 		}
@@ -87,37 +106,11 @@ module.exports = function (options) {
 		log('Apache restarted');
 
 		// All done
+		if (config.open) {
+			var url = renderedLocalUrl.indexOf('http://') === -1 ? 'http://' + renderedLocalUrl : renderedLocalUrl;
+			open(url);
+		}
+
 		bark();
 	});
-};
-
-function merge(target, source) {
-
-		/* Merges two (or more) objects,
-			 giving the last one precedence */
-
-	if ( typeof target !== 'object' ) {
-		target = {};
-	}
-
-	for (var property in source) {
-
-		if ( source.hasOwnProperty(property) ) {
-
-			var sourceProperty = source[ property ];
-
-			if ( typeof sourceProperty === 'object' ) {
-				target[ property ] = merge( target[ property ], sourceProperty );
-				continue;
-			}
-
-			target[ property ] = sourceProperty;
-		}
-	}
-
-	for (var a = 2, l = arguments.length; a < l; a++) {
-		merge(target, arguments[a]);
-	}
-
-	return target;
 };

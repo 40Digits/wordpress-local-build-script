@@ -3,6 +3,6 @@ var gulp = require('gulp'),
 
 gulp.task('build', build({
   localUrl: '<%= siteName %>.dev',
-  mysqlUser: 'admin',
-  mysqlPw: '1234'
+  vhostsDir: '/etc/apache2/2.4/extra/vhosts',
+  open: true
 }));

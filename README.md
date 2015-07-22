@@ -10,6 +10,7 @@ Things it does:
 4. Creates a database
 5. Creates `wp-config.php`
 6. Restarts apache
+7. Opens url in browser (optional)
 
 ## Options
 
@@ -30,6 +31,10 @@ Since everyone is a snowflake, here are available options for configuration and 
 - `mysqlUser: 'root'`: Your MySQL username.
 
 - `mysqlPw: ''`: Your MySQL password.
+
+- `open: false`: Open the newly created url in your default browser.
+
+- `apache24: true`: When using apache 2.4, you may experience a 403 when visiting the newly created url. This adds a [directive](http://stackoverflow.com/questions/6959189/apache-virtualhost-403-forbidden#answer-13923435) to the vhosts that fixes the issue.
 
 ## Instructions :rooster::dash:
 

@@ -20,6 +20,12 @@ module.exports = {
 
   // Mysql credentials
   mysqlUser: 'root',
-  mysqlPw: ''
+  mysqlPw: '',
+
+  // Open url in a browser
+  open: false,
+
+  // Using apache 2.4 for adding the directive to vhost file
+  apache24: true
 
 }
